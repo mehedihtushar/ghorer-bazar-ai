@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ঘরের বাজার AI সাপোর্ট</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* আপনার অরিজিনাল ডিজাইন - কোনো পরিবর্তন নেই */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root { --orange: #E8600A; --orange-deep: #C44E04; --orange-light: #FF7A2F; --orange-glow: rgba(232,96,10,0.15); --orange-pale: #FFF3EC; --cream: #FFFAF6; --dark: #1A0F00; --dark2: #2D1A08; --text: #1A0F00; --text2: #7A5A3A; --border: rgba(232,96,10,0.2); --white: #FFFFFF; --success: #1D9E75; --warn: #EF9F27; --danger: #E24B4A; }
+html, body { height: 100%; font-family: 'Hind Siliguri', 'Sora', sans-serif; background: var(--cream); color: var(--text); }
+.topnav { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 32px; height: 60px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(232,96,10,0.08); }
+.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-logo-icon { width: 38px; height: 38px; background: var(--orange); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.nav-logo-text { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 18px; color: var(--orange); }
+.nav-logo-text span { color: var(--dark); }
+.nav-spacer { flex: 1; }
+.nav-badge { display: flex; align-items: center; gap: 6px; background: var(--orange-pale); border: 1px solid var(--border); border-radius: 20px; padding: 5px 14px; font-size: 12px; font-weight: 600; color: var(--orange-deep); }
+.live-dot { width: 7px; height: 7px; background: #1D9E75; border-radius: 50%; animation: livePulse 2s infinite; }
+@keyframes livePulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+.hero { background: linear-gradient(135deg, var(--orange) 0%, var(--orange-deep) 60%, #8B2E00 100%); padding: 48px 32px 36px; text-align: center; position: relative; }
+.hero-inner { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
+.hero-icon-wrap { width: 72px; height: 72px; background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.3); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px; backdrop-filter: blur(10px); }
+.hero-title { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800; color: white; margin-bottom: 8px; }
+.hero-sub { font-size: 14px; color: rgba(255,255,255,0.8); margin-bottom: 20px; }
+.hero-chips { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.hero-chip { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 4px 14px; font-size: 12px; color: white; }
+.main { flex: 1; display: flex; max-width: 1100px; margin: 0 auto; width: 100%; padding: 28px 24px; gap: 24px; align-items: flex-start; }
+.sidebar { width: 240px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; }
+.sidebar-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 18px; box-shadow: 0 2px 8px rgba(232,96,10,0.06); }
+.sidebar-title { font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text2); margin-bottom: 12px; }
+.quick-btn { width: 100%; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--cream); cursor: pointer; margin-bottom: 6px; font-family: 'Hind Siliguri'; font-size: 13px; }
+.quick-btn:hover { background: var(--orange-pale); border-color: var(--orange); color: var(--orange-deep); }
+.quick-btn-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.q-order .quick-btn-icon { background: #FEF3C7; }
+.q-delivery .quick-btn-icon { background: #DBEAFE; }
+.q-product .quick-btn-icon { background: #D1FAE5; }
+.helpline-box { background: linear-gradient(135deg, var(--orange) 0%, var(--orange-deep) 100%); border-radius: 12px; padding: 14px; text-align: center; color: white; }
+.chat-wrap { flex: 1; min-width: 0; }
+.chat-box { background: var(--white); border: 1px solid var(--border); border-radius: 20px; display: flex; flex-direction: column; height: 600px; overflow: hidden; box-shadow: 0 4px 24px rgba(232,96,10,0.1); }
+.chat-header { background: linear-gradient(135deg, var(--orange) 0%, var(--orange-deep) 100%); padding: 14px 20px; display: flex; align-items: center; gap: 12px; }
+.chat-header-title { font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700; color: white; }
+.messages { flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 14px; background: var(--cream); }
+.msg { display: flex; gap: 10px; animation: fadeUp 0.3s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.msg.user { flex-direction: row-reverse; }
+.avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.avatar.ai { background: var(--orange); color: white; }
+.avatar.user { background: var(--orange-pale); color: var(--orange); border: 1px solid var(--border); }
+.bubble { max-width: 76%; padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.7; }
+.msg.ai .bubble { background: var(--white); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+.msg.user .bubble { background: var(--orange); color: white; border-bottom-right-radius: 4px; }
+.msg-meta { font-size: 11px; color: var(--text2); margin-top: 5px; display: flex; gap: 5px; }
+.msg.user .msg-meta { justify-content: flex-end; }
+.typing-indicator { display: none; align-items: center; gap: 4px; padding: 12px 16px; background: var(--white); border: 1px solid var(--border); border-radius: 16px; }
+.typing-indicator.show { display: flex; }
+.typing-dot { width: 6px; height: 6px; background: var(--orange); border-radius: 50%; animation: bounce 1.2s infinite; }
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.input-area { background: var(--white); border-top: 1px solid var(--border); padding: 14px 18px; }
+.input-row { display: flex; align-items: center; gap: 8px; background: var(--cream); border: 1.5px solid var(--border); border-radius: 28px; padding: 6px 18px; }
+.text-input { flex: 1; border: none; background: transparent; font-size: 14px; outline: none; padding: 8px 0; font-family: 'Hind Siliguri'; }
+.send-btn { background: var(--orange); border: none; color: white; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; }
+.footer { background: var(--dark2); color: white; text-align: center; padding: 16px; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">🛒</div>
+    <div class="nav-logo-text">ঘরের <span>বাজার</span></div>
+  </a>
+  <div class="nav-spacer"></div>
+  <div class="nav-badge"><div class="live-dot"></div> AI সাপোর্ট সক্রিয়</div>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-icon-wrap">🤖</div>
+    <div class="hero-title">ঘরের বাজার AI কল সেন্টার</div>
+    <div class="hero-sub">বাংলায় কথা বলুন বা লিখুন — আমরা সবসময় পাশে আছি</div>
+    <div class="hero-chips">
+        <div class="hero-chip">🎤 ভয়েস ইনপুট</div>
+        <div class="hero-chip">⚡ তাৎক্ষণিক সাড়া</div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-title">দ্রুত সাহায্য</div>
+      <button class="quick-btn q-order" onclick="sendQ('আমার অর্ডার কোথায়?')"><div class="quick-btn-icon">📦</div> অর্ডার ট্র্যাক</button>
+      <button class="quick-btn q-delivery" onclick="sendQ('আমার ডেলিভারি দেরি হচ্ছে')"><div class="quick-btn-icon">🚚</div> ডেলিভারি সমস্যা</button>
+      <button class="quick-btn q-product" onclick="sendQ('পণ্যের দাম জানতে চাই')"><div class="quick-btn-icon">🛍️</div> পণ্য জিজ্ঞাসা</button>
+    </div>
+    <div class="helpline-box">
+      <div>📞 হেল্পলাইন</div>
+      <div class="helpline-num">01700-000000</div>
+    </div>
+  </aside>
+
+  <div class="chat-wrap">
+    <div class="chat-box">
+      <div class="chat-header">
+        <div class="chat-header-avatar">🤖</div>
+        <div class="chat-header-info">
+          <div class="chat-header-title">ঘরের বাজার AI এজেন্ট</div>
+          <div class="chat-header-sub">অনলাইন সাপোর্ট</div>
+        </div>
+      </div>
+
+      <div class="messages" id="messages">
+        <div class="msg ai">
+          <div class="avatar ai">AI</div>
+          <div class="bubble">আসসালামু আলাইকুম! আমি ঘরের বাজারের AI সাপোর্ট এজেন্ট। কিভাবে সাহায্য করতে পারি?</div>
+        </div>
+      </div>
+
+      <div class="input-area">
+        <div class="input-row">
+          <input class="text-input" id="userInput" type="text" placeholder="বাংলায় লিখুন..." onkeydown="if(event.key==='Enter') sendMessage()" />
+          <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">ঘরের বাজার AI কল সেন্টার — © ২০২৬</footer>
+
+<script>
+function getTime() {
+    return new Date().toLocaleTimeString('bn-BD', {hour:'2-digit', minute:'2-digit'});
+}
+
+function addMessage(role, text) {
+    const msgs = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.className = 'msg ' + role;
+    const avatar = role === 'ai' ? '<div class="avatar ai">AI</div>' : '<div class="avatar user">আপ</div>';
+    
+    div.innerHTML = `
+        ${avatar}
+        <div>
+            <div class="bubble">${text.replace(/\n/g,'<br>')}</div>
+            <div class="msg-meta">
+                <span>${role === 'ai' ? 'AI Agent' : 'আপনি'}</span> • <span>${getTime()}</span>
+            </div>
+        </div>`;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+    const msgs = document.getElementById('messages');
+    const d = document.createElement('div');
+    d.className = 'msg ai'; d.id = 'typing-msg';
+    d.innerHTML = `<div class="avatar ai">AI</div><div class="typing-indicator show"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+    msgs.appendChild(d);
+    msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() {
+    const t = document.getElementById('typing-msg');
+    if (t) t.remove();
+}
+
+async function sendMessage(overrideText) {
+    const input = document.getElementById('userInput');
+    const text = overrideText || input.value.trim();
+    if (!text) return;
+
+    input.value = '';
+    document.getElementById('sendBtn').disabled = true;
+
+    addMessage('user', text);
+    showTyping();
+
+    try {
+        // এই লিঙ্কটি আপনার Python FastAPI সার্ভারের সাথে কানেক্টেড (Port 8080)
+        const resp = await fetch('http://192.168.0.112:8080/chat', { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: text }) 
+        });
+
+        if (!resp.ok) throw new Error('Network error');
+
+        const data = await resp.json();
+        removeTyping();
+        addMessage('ai', data.reply || 'দুঃখিত, কোনো উত্তর পাওয়া যায়নি।');
+        
+    } catch (err) {
+        console.error(err);
+        removeTyping();
+        addMessage('ai', 'দুঃখিত, ব্যাকএন্ড সার্ভারের সাথে যোগাযোগ করা যাচ্ছে না। আপনার পাইথন সার্ভারটি (Port 8080) কি চালু আছে?');
+    } finally {
+        document.getElementById('sendBtn').disabled = false;
+    }
+}
+
+function sendQ(q) { sendMessage(q); }
+</script>
+</body>
+</html>
