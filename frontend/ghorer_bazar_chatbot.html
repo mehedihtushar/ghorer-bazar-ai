@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* আপনার অরিজিনাল ডিজাইন - কোনো পরিবর্তন নেই */
+/* আপনার অরিজিনাল ডিজাইন - অপরিবর্তিত */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root { --orange: #E8600A; --orange-deep: #C44E04; --orange-light: #FF7A2F; --orange-glow: rgba(232,96,10,0.15); --orange-pale: #FFF3EC; --cream: #FFFAF6; --dark: #1A0F00; --dark2: #2D1A08; --text: #1A0F00; --text2: #7A5A3A; --border: rgba(232,96,10,0.2); --white: #FFFFFF; --success: #1D9E75; --warn: #EF9F27; --danger: #E24B4A; }
 html, body { height: 100%; font-family: 'Hind Siliguri', 'Sora', sans-serif; background: var(--cream); color: var(--text); }
@@ -61,7 +61,11 @@ html, body { height: 100%; font-family: 'Hind Siliguri', 'Sora', sans-serif; bac
 .input-area { background: var(--white); border-top: 1px solid var(--border); padding: 14px 18px; }
 .input-row { display: flex; align-items: center; gap: 8px; background: var(--cream); border: 1.5px solid var(--border); border-radius: 28px; padding: 6px 18px; }
 .text-input { flex: 1; border: none; background: transparent; font-size: 14px; outline: none; padding: 8px 0; font-family: 'Hind Siliguri'; }
-.send-btn { background: var(--orange); border: none; color: white; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; }
+.send-btn { background: var(--orange); border: none; color: white; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.voice-btn { background: transparent; border: none; color: var(--orange); font-size: 20px; cursor: pointer; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.voice-btn:hover { background: var(--orange-pale); }
+.voice-btn.listening { color: var(--danger); animation: voicePulse 1.5s infinite; }
+@keyframes voicePulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.7; } 100% { transform: scale(1); opacity: 1; } }
 .footer { background: var(--dark2); color: white; text-align: center; padding: 16px; font-size: 12px; }
 </style>
 </head>
@@ -121,7 +125,8 @@ html, body { height: 100%; font-family: 'Hind Siliguri', 'Sora', sans-serif; bac
 
       <div class="input-area">
         <div class="input-row">
-          <input class="text-input" id="userInput" type="text" placeholder="বাংলায় লিখুন..." onkeydown="if(event.key==='Enter') sendMessage()" />
+          <input class="text-input" id="userInput" type="text" placeholder="বাংলায় লিখুন বা কথা বলুন..." onkeydown="if(event.key==='Enter') sendMessage()" />
+          <button class="voice-btn" id="voiceBtn" title="ভয়েস ইনপুট" onclick="startVoice()">🎤</button>
           <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
         </div>
       </div>
@@ -132,10 +137,12 @@ html, body { height: 100%; font-family: 'Hind Siliguri', 'Sora', sans-serif; bac
 <footer class="footer">ঘরের বাজার AI কল সেন্টার — © ২০২৬</footer>
 
 <script>
+// ১. সময় ফরম্যাট করার ফাংশন
 function getTime() {
     return new Date().toLocaleTimeString('bn-BD', {hour:'2-digit', minute:'2-digit'});
 }
 
+// ২. মেসেজ স্ক্রিনে দেখানোর ফাংশন
 function addMessage(role, text) {
     const msgs = document.getElementById('messages');
     const div = document.createElement('div');
@@ -154,6 +161,7 @@ function addMessage(role, text) {
     msgs.scrollTop = msgs.scrollHeight;
 }
 
+// ৩. টাইপিং ইনডিকেটর দেখানো ও মোছা
 function showTyping() {
     const msgs = document.getElementById('messages');
     const d = document.createElement('div');
@@ -168,6 +176,7 @@ function removeTyping() {
     if (t) t.remove();
 }
 
+// ৪. মেসেজ পাঠানোর প্রধান ফাংশন (Modified)
 async function sendMessage(overrideText) {
     const input = document.getElementById('userInput');
     const text = overrideText || input.value.trim();
@@ -180,29 +189,76 @@ async function sendMessage(overrideText) {
     showTyping();
 
     try {
-        // এই লিঙ্কটি আপনার Python FastAPI সার্ভারের সাথে কানেক্টেড (Port 8080)
-        const resp = await fetch('http://192.168.0.112:8080/chat', { 
+        // ডাইনামিক ইউআরএল হ্যান্ডলিং (Localhost বা IP যাই হোক কাজ করবে)
+        const chatUrl = window.location.origin === 'null' ? 'http://localhost:8080/chat' : '/chat';
+        
+        const resp = await fetch(chatUrl, { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: text }) 
         });
 
-        if (!resp.ok) throw new Error('Network error');
+        if (!resp.ok) throw new Error('সার্ভার রেসপন্স দিচ্ছে না');
 
         const data = await resp.json();
         removeTyping();
-        addMessage('ai', data.reply || 'দুঃখিত, কোনো উত্তর পাওয়া যায়নি।');
+        addMessage('ai', data.reply || 'দুঃখিত, কোনো উত্তর পাওয়া যায়নি।');
         
     } catch (err) {
         console.error(err);
         removeTyping();
-        addMessage('ai', 'দুঃখিত, ব্যাকএন্ড সার্ভারের সাথে যোগাযোগ করা যাচ্ছে না। আপনার পাইথন সার্ভারটি (Port 8080) কি চালু আছে?');
+        addMessage('ai', 'দুঃখিত, এআই সার্ভারের সাথে যোগাযোগ বিচ্ছিন্ন হয়েছে। আপনার পাইথন কোডটি রান করা আছে কি না চেক করুন।');
     } finally {
         document.getElementById('sendBtn').disabled = false;
     }
 }
 
 function sendQ(q) { sendMessage(q); }
+
+// ৫. ভয়েস রিকগনিশন ফাংশন (Robust Version)
+function startVoice() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        alert("আপনার ব্রাউজারে ভয়েস সাপোর্ট নেই। অনুগ্রহ করে Chrome ব্যবহার করুন।");
+        return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'bn-BD'; 
+    recognition.interimResults = false;
+    
+    const vBtn = document.getElementById('voiceBtn');
+    const input = document.getElementById('userInput');
+
+    recognition.onstart = () => {
+        vBtn.classList.add('listening');
+        vBtn.innerText = "🛑";
+    };
+
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        input.value = transcript;
+        // কথা শেষ হলে অটোমেটিক পাঠিয়ে দিবে
+        setTimeout(() => {
+            if(input.value === transcript) sendMessage();
+        }, 500);
+    };
+
+    recognition.onerror = (event) => {
+        vBtn.classList.remove('listening');
+        vBtn.innerText = "🎤";
+        if(event.error === 'not-allowed') {
+            alert("মাইক্রোফোন পারমিশন ডিনাইড। ব্রাউজারের লক আইকনে ক্লিক করে মাইক্রোফোন Allow করুন।");
+        }
+    };
+
+    recognition.onend = () => {
+        vBtn.classList.remove('listening');
+        vBtn.innerText = "🎤";
+    };
+
+    recognition.start();
+}
 </script>
 </body>
 </html>
