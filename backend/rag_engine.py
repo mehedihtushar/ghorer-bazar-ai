@@ -1,71 +1,81 @@
-import google.generativeai as genai
+import os
+import sys
 from datetime import datetime
+
+# ১. পাইথন পাথ ফিক্স
+site_packages_path = r'C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages'
+if site_packages_path not in sys.path:
+    sys.path.append(site_packages_path)
+
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_community.chat_message_histories import ChatMessageHistory
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_core.messages import HumanMessage, AIMessage
 from database import fetch_context
 
-# ১. কনফিগারেশন
-API_KEY = "AIzaSyDu_0CpCTZk3p4zGxc7S3YObChm4xHxlaI"
+# ২. কনফিগারেশন (আপনার দেওয়া কি-ই থাকবে)
+API_KEY = "AIzaSyDle2_vMD891YLm-U9Yh_jTVqHYbdlTvcU"
 
-# সিস্টেম ইন্সট্রাকশন: এটি এআই-এর ব্যক্তিত্ব নির্ধারণ করবে
-SYSTEM_INSTRUCTION = """
-আপনি 'ঘরের বাজার' (Ghorer Bazar) এর একজন অত্যন্ত দক্ষ, বন্ধুসুলভ এবং বুদ্ধিমান কাস্টমার সাপোর্ট এক্সিকিউটিভ।
+# ৩. মডেল সেটআপ (হুবহু রাখা হয়েছে)
+llm = ChatGoogleGenerativeAI(
+    model="gemini-2.5-flash",
+    google_api_key=API_KEY,
+    temperature=0.5
+)
 
-আপনার কথা বলার নিয়মাবলী:
-১. গ্রাহক যদি শুভেচ্ছা বিনিময় (হাই, হ্যালো, কেমন আছেন) বা সাধারণ কথা বলে, তবে বন্ধুসুলভ উত্তর দিন। সরাসরি মোবাইল নম্বর চাইবেন না।
-২. যদি গ্রাহক নির্দিষ্ট কোনো অর্ডার, ডেলিভারি বা প্রোডাক্ট নিয়ে সমস্যা বলে এবং আপনার কাছে থাকা 'তথ্য' (Data) সেকশনে তার উত্তর না থাকে, শুধুমাত্র তখনই বিনীতভাবে তার রেজিস্টার্ড মোবাইল নম্বর বা অর্ডার আইডিটি চাইবেন।
-৩. উত্তর সবসময় শুদ্ধ বাংলায়, ছোট এবং পেশাদার হতে হবে।
-৪. ডাটাবেজে তথ্য থাকলে সেটাকে সহজভাবে বুঝিয়ে বলুন। নিজের থেকে কোনো মিথ্যা তথ্য বা অফার দেবেন না।
-৫. 'বালা আসোনি' বা এই জাতীয় ক্যাজুয়াল কথার ক্ষেত্রে স্মার্টলি উত্তর দিন (যেমন: 'জি, আমি আপনার কথাটি ঠিক বুঝতে পারিনি, তবে আমি আপনাকে ঘরের বাজারের পণ্য বা অর্ডার নিয়ে সাহায্য করতে পারি')।
-"""
+# ৪. মেমোরি স্টোর (session-based)
+store = {}
 
-def generate_smart_response(user_input):
+def get_session_history(session_id: str) -> ChatMessageHistory:
+    if session_id not in store:
+        store[session_id] = ChatMessageHistory()
+    # শেষ ২০টি মেসেজ রাখো (k=20)
+    history = store[session_id]
+    if len(history.messages) > 20:
+        history.messages = history.messages[-20:]
+    return history
+
+# ৫. প্রম্পট টেমপ্লেট (শুধু সিস্টেম ইনস্ট্রাকশন একটু ডিটেইল করা হয়েছে যাতে আউটপুট স্মার্ট হয়)
+prompt = ChatPromptTemplate.from_messages([
+    ("system", """আপনি 'ঘরের বাজার' (Ghorer Bazar) এর একজন দক্ষ এবং বুদ্ধিমান এআই সাপোর্ট এজেন্ট।
+
+নিয়মাবলী:
+- গ্রাহকের আগের কথাগুলো এবং নতুন তথ্য (Context) মিলিয়ে উত্তর দিন।
+- যদি Context-এ অনেকগুলো পণ্যের তথ্য থাকে, তবে সেগুলো পয়েন্ট আকারে বিস্তারিত জানাবেন।
+- যদি গ্রাহক 'হ্যাঁ', 'কেন?', 'কত?' এর মতো ছোট কথা বলে, তবে আগের কথার রেশ ধরে উত্তর দিন।
+- উত্তর শুদ্ধ বাংলায় হবে এবং তথ্যবহুল হবে।
+
+নতুন তথ্য (DB): {context}"""),
+    MessagesPlaceholder(variable_name="chat_history"),
+    ("human", "{user_input}"),
+])
+
+# ৬. চেইন তৈরি
+chain = prompt | llm
+
+chat_chain = RunnableWithMessageHistory(
+    chain,
+    get_session_history,
+    input_messages_key="user_input",
+    history_messages_key="chat_history",
+)
+
+# ৭. মেইন ফাংশন
+def generate_smart_response(user_input: str, session_id: str = "default") -> str:
     try:
-        # ২. ডাটাবেজ থেকে প্রাসঙ্গিক তথ্য সংগ্রহ
         db_context = fetch_context(user_input)
-        current_time = datetime.now().strftime("%I:%M %p")
-        
-        # ৩. এপিআই কনফিগারেশন
-        genai.configure(api_key=API_KEY)
-        
-        # ৪. মডেল সিলেকশন (Gemini 1.5 Flash সবচেয়ে সাশ্রয়ী এবং স্থিতিশীল)
-        # যদি আপনার অ্যাকাউন্টে ২.০ কাজ করে, তবে 'gemini-2.0-flash' ব্যবহার করতে পারেন।
-        model = genai.GenerativeModel(
-            model_name='gemini-2.5-flash',
-            system_instruction=SYSTEM_INSTRUCTION
-        )
-        
-        # ৫. স্মার্ট জেনারেশন কনফিগ (টোকেন বাঁচানোর জন্য)
-        generation_config = {
-            "temperature": 0.5,       # কিছুটা ক্রিয়েটিভিটি থাকবে যাতে রোবটের মতো না শোনায়
-            "max_output_tokens": 200, # উত্তর ছোট রাখতে টোকেন লিমিট
-            "top_p": 0.9,
-        }
 
-        # ৬. প্রম্পট ডিজাইন
-        user_prompt = f"""
-        বর্তমান সময়: {current_time}
-        ডাটাবেজ থেকে পাওয়া তথ্য: {db_context}
-        গ্রাহকের প্রশ্ন: {user_input}
-        
-        উত্তর:"""
-
-        # ৭. রেসপন্স জেনারেট
-        response = model.generate_content(
-            user_prompt,
-            generation_config=generation_config
+        response = chat_chain.invoke(
+            {
+                "user_input": user_input,
+                "context": db_context,
+            },
+            config={"configurable": {"session_id": session_id}},
         )
-        
-        if response and response.text:
-            return response.text.strip()
-        else:
-            return "দুঃখিত, আমি আপনার কথাটি বুঝতে পারছি না। দয়া করে বিস্তারিত বলুন।"
+
+        return response.content.strip()
 
     except Exception as e:
-        error_msg = str(e)
-        # ইউজারকে সরাসরি টেকনিক্যাল এরর না দেখিয়ে সুন্দর মেসেজ দেওয়া
-        if "API_KEY_INVALID" in error_msg or "expired" in error_msg:
-            return "সিস্টেম আপডেট চলছে (Invalid API Key)। দয়া করে কিছুক্ষণ পর চেষ্টা করুন।"
-        elif "quota" in error_msg.lower():
-            return "দুঃখিত, বর্তমানে অনেক বেশি ট্রাফিক। দয়া করে ১ মিনিট পর আবার মেসেজ দিন।"
-        
-        print(f"Debug Log: {error_msg}")
-        return "কারিগরি সমস্যার কারণে উত্তর দিতে পারছি না। আমাদের হেল্পলাইনে কল করুন।"
+        print(f"LangChain Error: {str(e)}")
+        return "আমি আপনার কথাটি ঠিক বুঝতে পারছি না। দয়া করে বিস্তারিত বলুন।"

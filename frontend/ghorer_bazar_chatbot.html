@@ -7,69 +7,129 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* আপনার অরিজিনাল ডিজাইন - অপরিবর্তিত */
 * { box-sizing: border-box; margin: 0; padding: 0; }
-:root { --orange: #E8600A; --orange-deep: #C44E04; --orange-light: #FF7A2F; --orange-glow: rgba(232,96,10,0.15); --orange-pale: #FFF3EC; --cream: #FFFAF6; --dark: #1A0F00; --dark2: #2D1A08; --text: #1A0F00; --text2: #7A5A3A; --border: rgba(232,96,10,0.2); --white: #FFFFFF; --success: #1D9E75; --warn: #EF9F27; --danger: #E24B4A; }
+:root {
+  --orange: #E8600A; --orange-deep: #C44E04; --orange-light: #FF7A2F;
+  --orange-pale: #FFF3EC; --cream: #FFFAF6; --dark: #1A0F00; --dark2: #2D1A08;
+  --text: #1A0F00; --text2: #7A5A3A; --border: rgba(232,96,10,0.2);
+  --white: #FFFFFF; --danger: #E24B4A;
+}
 html, body { height: 100%; font-family: 'Hind Siliguri', 'Sora', sans-serif; background: var(--cream); color: var(--text); }
+
+/* NAV */
 .topnav { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 32px; height: 60px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(232,96,10,0.08); }
 .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-.nav-logo-icon { width: 38px; height: 38px; background: var(--orange); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.nav-logo-icon { width: 38px; height: 38px; background: var(--orange); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 2px 8px rgba(232,96,10,0.35); }
 .nav-logo-text { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 18px; color: var(--orange); }
 .nav-logo-text span { color: var(--dark); }
 .nav-spacer { flex: 1; }
 .nav-badge { display: flex; align-items: center; gap: 6px; background: var(--orange-pale); border: 1px solid var(--border); border-radius: 20px; padding: 5px 14px; font-size: 12px; font-weight: 600; color: var(--orange-deep); }
 .live-dot { width: 7px; height: 7px; background: #1D9E75; border-radius: 50%; animation: livePulse 2s infinite; }
-@keyframes livePulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
-.hero { background: linear-gradient(135deg, var(--orange) 0%, var(--orange-deep) 60%, #8B2E00 100%); padding: 48px 32px 36px; text-align: center; position: relative; }
+@keyframes livePulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+
+/* HERO */
+.hero { background: linear-gradient(135deg, var(--orange) 0%, var(--orange-deep) 60%, #8B2E00 100%); padding: 40px 32px 30px; text-align: center; position: relative; }
 .hero-inner { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
-.hero-icon-wrap { width: 72px; height: 72px; background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.3); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px; backdrop-filter: blur(10px); }
-.hero-title { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800; color: white; margin-bottom: 8px; }
-.hero-sub { font-size: 14px; color: rgba(255,255,255,0.8); margin-bottom: 20px; }
+.hero-icon-wrap { width: 68px; height: 68px; background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.3); border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 16px; }
+.hero-title { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 800; color: white; margin-bottom: 6px; }
+.hero-sub { font-size: 14px; color: rgba(255,255,255,0.8); margin-bottom: 16px; }
 .hero-chips { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
 .hero-chip { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 4px 14px; font-size: 12px; color: white; }
-.main { flex: 1; display: flex; max-width: 1100px; margin: 0 auto; width: 100%; padding: 28px 24px; gap: 24px; align-items: flex-start; }
-.sidebar { width: 240px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; }
-.sidebar-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 18px; box-shadow: 0 2px 8px rgba(232,96,10,0.06); }
-.sidebar-title { font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text2); margin-bottom: 12px; }
-.quick-btn { width: 100%; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--cream); cursor: pointer; margin-bottom: 6px; font-family: 'Hind Siliguri'; font-size: 13px; }
+
+/* MAIN */
+.page { display: flex; flex-direction: column; min-height: 100vh; }
+.main { flex: 1; display: flex; max-width: 1100px; margin: 0 auto; width: 100%; padding: 24px; gap: 20px; align-items: flex-start; }
+
+/* SIDEBAR */
+.sidebar { width: 230px; flex-shrink: 0; display: flex; flex-direction: column; gap: 14px; }
+.sidebar-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(232,96,10,0.06); }
+.sidebar-title { font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text2); margin-bottom: 10px; }
+.quick-btn { width: 100%; display: flex; align-items: center; gap: 10px; padding: 9px 11px; border: 1px solid var(--border); border-radius: 10px; background: var(--cream); cursor: pointer; margin-bottom: 6px; font-family: 'Hind Siliguri'; font-size: 13px; color: var(--text); transition: all 0.15s; text-align: left; }
 .quick-btn:hover { background: var(--orange-pale); border-color: var(--orange); color: var(--orange-deep); }
-.quick-btn-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.quick-btn:last-child { margin-bottom: 0; }
+.quick-btn-icon { width: 26px; height: 26px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
 .q-order .quick-btn-icon { background: #FEF3C7; }
 .q-delivery .quick-btn-icon { background: #DBEAFE; }
 .q-product .quick-btn-icon { background: #D1FAE5; }
+.q-complaint .quick-btn-icon { background: #FEE2E2; }
+.q-faq .quick-btn-icon { background: var(--orange-pale); }
+.stat-row { display: flex; gap: 8px; }
+.stat-box { flex: 1; background: var(--orange-pale); border: 1px solid var(--border); border-radius: 10px; padding: 10px 8px; text-align: center; }
+.stat-num { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 800; color: var(--orange); }
+.stat-label { font-size: 10px; color: var(--text2); margin-top: 2px; }
 .helpline-box { background: linear-gradient(135deg, var(--orange) 0%, var(--orange-deep) 100%); border-radius: 12px; padding: 14px; text-align: center; color: white; }
+.helpline-num { font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 800; }
+.helpline-label { font-size: 11px; opacity: 0.8; margin-top: 2px; }
+
+/* CHAT */
 .chat-wrap { flex: 1; min-width: 0; }
 .chat-box { background: var(--white); border: 1px solid var(--border); border-radius: 20px; display: flex; flex-direction: column; height: 600px; overflow: hidden; box-shadow: 0 4px 24px rgba(232,96,10,0.1); }
-.chat-header { background: linear-gradient(135deg, var(--orange) 0%, var(--orange-deep) 100%); padding: 14px 20px; display: flex; align-items: center; gap: 12px; }
-.chat-header-title { font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700; color: white; }
-.messages { flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 14px; background: var(--cream); }
+.chat-header { background: linear-gradient(135deg, var(--orange) 0%, var(--orange-deep) 100%); padding: 14px 20px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.chat-header-avatar { width: 40px; height: 40px; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.4); border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.chat-header-title { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; color: white; }
+.chat-header-sub { font-size: 11px; color: rgba(255,255,255,0.75); margin-top: 1px; }
+.online-pill { display: flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 3px 10px; font-size: 11px; font-weight: 600; color: white; margin-left: auto; }
+
+/* MESSAGES */
+.messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: var(--cream); scroll-behavior: smooth; }
+.messages::-webkit-scrollbar { width: 4px; }
+.messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 .msg { display: flex; gap: 10px; animation: fadeUp 0.3s ease; }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 .msg.user { flex-direction: row-reverse; }
-.avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
-.avatar.ai { background: var(--orange); color: white; }
+.avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.avatar.ai { background: linear-gradient(135deg, var(--orange), var(--orange-deep)); color: white; box-shadow: 0 2px 6px rgba(232,96,10,0.35); }
 .avatar.user { background: var(--orange-pale); color: var(--orange); border: 1px solid var(--border); }
-.bubble { max-width: 76%; padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.7; }
-.msg.ai .bubble { background: var(--white); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
-.msg.user .bubble { background: var(--orange); color: white; border-bottom-right-radius: 4px; }
-.msg-meta { font-size: 11px; color: var(--text2); margin-top: 5px; display: flex; gap: 5px; }
+.bubble { max-width: 76%; padding: 11px 15px; border-radius: 16px; font-size: 14px; line-height: 1.7; font-family: 'Hind Siliguri', sans-serif; }
+.msg.ai .bubble { background: var(--white); border: 1px solid var(--border); border-bottom-left-radius: 4px; color: var(--text); box-shadow: 0 1px 4px rgba(232,96,10,0.06); }
+.msg.user .bubble { background: linear-gradient(135deg, var(--orange), var(--orange-deep)); color: white; border-bottom-right-radius: 4px; box-shadow: 0 2px 10px rgba(232,96,10,0.3); }
+.msg-meta { font-size: 11px; color: var(--text2); margin-top: 4px; display: flex; align-items: center; gap: 5px; }
 .msg.user .msg-meta { justify-content: flex-end; }
-.typing-indicator { display: none; align-items: center; gap: 4px; padding: 12px 16px; background: var(--white); border: 1px solid var(--border); border-radius: 16px; }
+
+/* TYPING */
+.typing-indicator { display: none; align-items: center; gap: 4px; padding: 11px 15px; background: var(--white); border: 1px solid var(--border); border-radius: 16px; border-bottom-left-radius: 4px; width: fit-content; }
 .typing-indicator.show { display: flex; }
-.typing-dot { width: 6px; height: 6px; background: var(--orange); border-radius: 50%; animation: bounce 1.2s infinite; }
+.typing-dot { width: 6px; height: 6px; background: var(--orange); border-radius: 50%; animation: bounce 1.2s ease-in-out infinite; }
+.typing-dot:nth-child(2){animation-delay:0.2s} .typing-dot:nth-child(3){animation-delay:0.4s}
 @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-.input-area { background: var(--white); border-top: 1px solid var(--border); padding: 14px 18px; }
-.input-row { display: flex; align-items: center; gap: 8px; background: var(--cream); border: 1.5px solid var(--border); border-radius: 28px; padding: 6px 18px; }
-.text-input { flex: 1; border: none; background: transparent; font-size: 14px; outline: none; padding: 8px 0; font-family: 'Hind Siliguri'; }
-.send-btn { background: var(--orange); border: none; color: white; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.voice-btn { background: transparent; border: none; color: var(--orange); font-size: 20px; cursor: pointer; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-.voice-btn:hover { background: var(--orange-pale); }
-.voice-btn.listening { color: var(--danger); animation: voicePulse 1.5s infinite; }
-@keyframes voicePulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.7; } 100% { transform: scale(1); opacity: 1; } }
-.footer { background: var(--dark2); color: white; text-align: center; padding: 16px; font-size: 12px; }
+
+/* VOICE WAVE */
+.voice-wave { display: none; align-items: center; gap: 3px; padding: 10px 14px; background: var(--white); border: 1px solid var(--danger); border-radius: 14px; }
+.voice-wave.show { display: flex; }
+.wave-bar { width: 3px; background: var(--danger); border-radius: 2px; animation: waveAnim 0.8s ease-in-out infinite; }
+.wave-bar:nth-child(1){height:8px;animation-delay:0s} .wave-bar:nth-child(2){height:16px;animation-delay:0.1s}
+.wave-bar:nth-child(3){height:22px;animation-delay:0.2s} .wave-bar:nth-child(4){height:14px;animation-delay:0.3s}
+.wave-bar:nth-child(5){height:20px;animation-delay:0.15s} .wave-bar:nth-child(6){height:10px;animation-delay:0.25s}
+@keyframes waveAnim{0%,100%{transform:scaleY(0.5)}50%{transform:scaleY(1.2)}}
+.wave-label { font-size: 12px; color: var(--danger); margin-left: 6px; font-weight: 600; }
+
+/* INPUT */
+.input-area { background: var(--white); border-top: 1px solid var(--border); padding: 13px 16px; flex-shrink: 0; }
+.input-row { display: flex; align-items: center; gap: 8px; background: var(--cream); border: 1.5px solid var(--border); border-radius: 28px; padding: 5px 5px 5px 16px; transition: border-color 0.2s, box-shadow 0.2s; }
+.input-row:focus-within { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(232,96,10,0.1); }
+.text-input { flex: 1; border: none; background: transparent; font-size: 14px; color: var(--text); outline: none; font-family: 'Hind Siliguri', sans-serif; padding: 6px 0; }
+.text-input::placeholder { color: var(--text2); }
+.icon-btn { width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--border); background: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.15s; flex-shrink: 0; }
+.icon-btn:hover { border-color: var(--orange); background: var(--orange-pale); }
+.icon-btn.recording { background: var(--danger); color: white; border-color: var(--danger); animation: recPulse 1s infinite; }
+@keyframes recPulse{0%,100%{box-shadow:0 0 0 0 rgba(226,75,74,0.4)}50%{box-shadow:0 0 0 6px rgba(226,75,74,0)}}
+.send-btn { width: 36px; height: 36px; border-radius: 50%; border: none; background: linear-gradient(135deg, var(--orange), var(--orange-deep)); cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; font-size: 15px; transition: all 0.15s; flex-shrink: 0; box-shadow: 0 2px 8px rgba(232,96,10,0.35); }
+.send-btn:hover { transform: scale(1.05); box-shadow: 0 4px 14px rgba(232,96,10,0.45); }
+.send-btn:disabled { background: #D1C5B8; box-shadow: none; cursor: not-allowed; transform: none; }
+.input-hint { text-align: center; font-size: 11px; color: var(--text2); margin-top: 7px; }
+
+/* FOOTER */
+footer { background: var(--dark2); color: rgba(255,255,255,0.6); text-align: center; padding: 14px; font-size: 12px; }
+footer strong { color: #FF9A5C; }
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { padding: 12px; }
+  .chat-box { height: calc(100vh - 280px); min-height: 420px; }
+}
 </style>
 </head>
-<body>
+<body class="page">
 
 <nav class="topnav">
   <a href="#" class="nav-logo">
@@ -86,8 +146,10 @@ html, body { height: 100%; font-family: 'Hind Siliguri', 'Sora', sans-serif; bac
     <div class="hero-title">ঘরের বাজার AI কল সেন্টার</div>
     <div class="hero-sub">বাংলায় কথা বলুন বা লিখুন — আমরা সবসময় পাশে আছি</div>
     <div class="hero-chips">
-        <div class="hero-chip">🎤 ভয়েস ইনপুট</div>
-        <div class="hero-chip">⚡ তাৎক্ষণিক সাড়া</div>
+      <div class="hero-chip">🎤 ভয়েস ইনপুট</div>
+      <div class="hero-chip">🔊 ভয়েস আউটপুট</div>
+      <div class="hero-chip">🗄️ RAG-চালিত</div>
+      <div class="hero-chip">⚡ তাৎক্ষণিক সাড়া</div>
     </div>
   </div>
 </div>
@@ -99,10 +161,22 @@ html, body { height: 100%; font-family: 'Hind Siliguri', 'Sora', sans-serif; bac
       <button class="quick-btn q-order" onclick="sendQ('আমার অর্ডার কোথায়?')"><div class="quick-btn-icon">📦</div> অর্ডার ট্র্যাক</button>
       <button class="quick-btn q-delivery" onclick="sendQ('আমার ডেলিভারি দেরি হচ্ছে')"><div class="quick-btn-icon">🚚</div> ডেলিভারি সমস্যা</button>
       <button class="quick-btn q-product" onclick="sendQ('পণ্যের দাম জানতে চাই')"><div class="quick-btn-icon">🛍️</div> পণ্য জিজ্ঞাসা</button>
+      <button class="quick-btn q-complaint" onclick="sendQ('আমি অভিযোগ জানাতে চাই')"><div class="quick-btn-icon">⚠️</div> অভিযোগ দাখিল</button>
+      <button class="quick-btn q-faq" onclick="sendQ('রিটার্ন পলিসি কী?')"><div class="quick-btn-icon">❓</div> সাধারণ প্রশ্ন</button>
     </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-title">আজকের পরিসংখ্যান</div>
+      <div class="stat-row">
+        <div class="stat-box"><div class="stat-num">1.2k</div><div class="stat-label">প্রশ্ন আজ</div></div>
+        <div class="stat-box"><div class="stat-num">98%</div><div class="stat-label">সমাধান</div></div>
+      </div>
+    </div>
+
     <div class="helpline-box">
-      <div>📞 হেল্পলাইন</div>
+      <div style="font-size:12px;opacity:0.85;margin-bottom:4px">📞 হেল্পলাইন</div>
       <div class="helpline-num">01700-000000</div>
+      <div class="helpline-label">সকাল ৮টা – রাত ১০টা</div>
     </div>
   </aside>
 
@@ -110,155 +184,217 @@ html, body { height: 100%; font-family: 'Hind Siliguri', 'Sora', sans-serif; bac
     <div class="chat-box">
       <div class="chat-header">
         <div class="chat-header-avatar">🤖</div>
-        <div class="chat-header-info">
+        <div>
           <div class="chat-header-title">ঘরের বাজার AI এজেন্ট</div>
-          <div class="chat-header-sub">অনলাইন সাপোর্ট</div>
+          <div class="chat-header-sub">Gemini + RAG · বাংলা সাপোর্ট</div>
         </div>
+        <div class="online-pill"><div class="live-dot"></div> অনলাইন</div>
       </div>
 
       <div class="messages" id="messages">
         <div class="msg ai">
           <div class="avatar ai">AI</div>
-          <div class="bubble">আসসালামু আলাইকুম! আমি ঘরের বাজারের AI সাপোর্ট এজেন্ট। কিভাবে সাহায্য করতে পারি?</div>
+          <div>
+            <div class="bubble">🙏 আসসালামু আলাইকুম! আমি ঘরের বাজারের AI সাপোর্ট এজেন্ট।<br><br>আপনার <strong>অর্ডার ট্র্যাকিং</strong>, <strong>ডেলিভারি</strong>, <strong>পণ্যের তথ্য</strong> এবং <strong>অভিযোগ</strong> বিষয়ে সাহায্য করতে পারি।<br><br>বাংলায় লিখুন বা মাইক্রোফোনে কথা বলুন 😊</div>
+            <div class="msg-meta"><span>AI Agent</span><span>•</span><span id="start-time">এইমাত্র</span></div>
+          </div>
         </div>
       </div>
 
       <div class="input-area">
         <div class="input-row">
-          <input class="text-input" id="userInput" type="text" placeholder="বাংলায় লিখুন বা কথা বলুন..." onkeydown="if(event.key==='Enter') sendMessage()" />
-          <button class="voice-btn" id="voiceBtn" title="ভয়েস ইনপুট" onclick="startVoice()">🎤</button>
-          <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+          <input class="text-input" id="userInput" type="text"
+            placeholder="বাংলায় লিখুন বা মাইক্রোফোন ব্যবহার করুন..."
+            onkeydown="if(event.key==='Enter') sendMessage()" />
+          <button class="icon-btn" id="voiceBtn" onclick="toggleVoice()" title="ভয়েস ইনপুট">🎤</button>
+          <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="পাঠান">➤</button>
         </div>
+        <div class="input-hint">🔒 সুরক্ষিত · Gemini AI · RAG-চালিত</div>
       </div>
     </div>
   </div>
 </div>
 
-<footer class="footer">ঘরের বাজার AI কল সেন্টার — © ২০২৬</footer>
+<footer><strong>ঘরের বাজার</strong> AI কল সেন্টার — © ২০২৬</footer>
 
 <script>
-// ১. সময় ফরম্যাট করার ফাংশন
+// ── Session ID (প্রতি ব্রাউজার সেশনে unique) ──
+const SESSION_ID = 'session_' + Math.random().toString(36).slice(2, 9);
+
+// ── Backend URL (same server থেকে serve হলে relative, নইলে full URL) ──
+const API_URL = '/chat';
+
+let isRecording = false;
+let recognition = null;
+let isSpeaking = false;
+
 function getTime() {
-    return new Date().toLocaleTimeString('bn-BD', {hour:'2-digit', minute:'2-digit'});
+  return new Date().toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' });
 }
 
-// ২. মেসেজ স্ক্রিনে দেখানোর ফাংশন
 function addMessage(role, text) {
-    const msgs = document.getElementById('messages');
-    const div = document.createElement('div');
-    div.className = 'msg ' + role;
-    const avatar = role === 'ai' ? '<div class="avatar ai">AI</div>' : '<div class="avatar user">আপ</div>';
-    
-    div.innerHTML = `
-        ${avatar}
-        <div>
-            <div class="bubble">${text.replace(/\n/g,'<br>')}</div>
-            <div class="msg-meta">
-                <span>${role === 'ai' ? 'AI Agent' : 'আপনি'}</span> • <span>${getTime()}</span>
-            </div>
-        </div>`;
-    msgs.appendChild(div);
-    msgs.scrollTop = msgs.scrollHeight;
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  const avatar = role === 'ai'
+    ? '<div class="avatar ai">AI</div>'
+    : '<div class="avatar user">আপ</div>';
+  div.innerHTML = `
+    ${avatar}
+    <div>
+      <div class="bubble">${text.replace(/\n/g, '<br>')}</div>
+      <div class="msg-meta">
+        <span>${role === 'ai' ? 'AI Agent' : 'আপনি'}</span>
+        <span>•</span>
+        <span>${getTime()}</span>
+      </div>
+    </div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
 }
 
-// ৩. টাইপিং ইনডিকেটর দেখানো ও মোছা
 function showTyping() {
-    const msgs = document.getElementById('messages');
-    const d = document.createElement('div');
-    d.className = 'msg ai'; d.id = 'typing-msg';
-    d.innerHTML = `<div class="avatar ai">AI</div><div class="typing-indicator show"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
-    msgs.appendChild(d);
-    msgs.scrollTop = msgs.scrollHeight;
+  const msgs = document.getElementById('messages');
+  const d = document.createElement('div');
+  d.className = 'msg ai'; d.id = 'typing-msg';
+  d.innerHTML = `<div class="avatar ai">AI</div>
+    <div class="typing-indicator show">
+      <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+    </div>`;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
 }
 
 function removeTyping() {
-    const t = document.getElementById('typing-msg');
-    if (t) t.remove();
+  const t = document.getElementById('typing-msg');
+  if (t) t.remove();
 }
 
-// ৪. মেসেজ পাঠানোর প্রধান ফাংশন (Modified)
+// ── মেইন send ফাংশন ──
 async function sendMessage(overrideText) {
-    const input = document.getElementById('userInput');
-    const text = overrideText || input.value.trim();
-    if (!text) return;
+  const input = document.getElementById('userInput');
+  const text = overrideText || input.value.trim();
+  if (!text) return;
 
-    input.value = '';
-    document.getElementById('sendBtn').disabled = true;
+  input.value = '';
+  document.getElementById('sendBtn').disabled = true;
 
-    addMessage('user', text);
-    showTyping();
+  addMessage('user', text);
+  showTyping();
 
-    try {
-        // ডাইনামিক ইউআরএল হ্যান্ডলিং (Localhost বা IP যাই হোক কাজ করবে)
-        const chatUrl = window.location.origin === 'null' ? 'http://localhost:8080/chat' : '/chat';
-        
-        const resp = await fetch(chatUrl, { 
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: text }) 
-        });
+  try {
+    const resp = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text, session_id: SESSION_ID })
+    });
 
-        if (!resp.ok) throw new Error('সার্ভার রেসপন্স দিচ্ছে না');
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
 
-        const data = await resp.json();
-        removeTyping();
-        addMessage('ai', data.reply || 'দুঃখিত, কোনো উত্তর পাওয়া যায়নি।');
-        
-    } catch (err) {
-        console.error(err);
-        removeTyping();
-        addMessage('ai', 'দুঃখিত, এআই সার্ভারের সাথে যোগাযোগ বিচ্ছিন্ন হয়েছে। আপনার পাইথন কোডটি রান করা আছে কি না চেক করুন।');
-    } finally {
-        document.getElementById('sendBtn').disabled = false;
-    }
+    const data = await resp.json();
+    removeTyping();
+
+    const reply = data.reply || 'দুঃখিত, উত্তরটি পাওয়া যাচ্ছে না।';
+    addMessage('ai', reply);
+
+    // অটো ভয়েস আউটপুট
+    speakText(reply);
+
+  } catch (err) {
+    console.error('Fetch Error:', err);
+    removeTyping();
+    addMessage('ai', '⚠️ সার্ভারের সাথে যোগাযোগ হচ্ছে না। নিশ্চিত করুন main.py রান করা আছে (পোর্ট ৮০৮০)।');
+  } finally {
+    document.getElementById('sendBtn').disabled = false;
+  }
 }
 
 function sendQ(q) { sendMessage(q); }
 
-// ৫. ভয়েস রিকগনিশন ফাংশন (Robust Version)
-function startVoice() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        alert("আপনার ব্রাউজারে ভয়েস সাপোর্ট নেই। অনুগ্রহ করে Chrome ব্যবহার করুন।");
-        return;
-    }
-
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'bn-BD'; 
-    recognition.interimResults = false;
-    
-    const vBtn = document.getElementById('voiceBtn');
-    const input = document.getElementById('userInput');
-
-    recognition.onstart = () => {
-        vBtn.classList.add('listening');
-        vBtn.innerText = "🛑";
-    };
-
-    recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        input.value = transcript;
-        // কথা শেষ হলে অটোমেটিক পাঠিয়ে দিবে
-        setTimeout(() => {
-            if(input.value === transcript) sendMessage();
-        }, 500);
-    };
-
-    recognition.onerror = (event) => {
-        vBtn.classList.remove('listening');
-        vBtn.innerText = "🎤";
-        if(event.error === 'not-allowed') {
-            alert("মাইক্রোফোন পারমিশন ডিনাইড। ব্রাউজারের লক আইকনে ক্লিক করে মাইক্রোফোন Allow করুন।");
-        }
-    };
-
-    recognition.onend = () => {
-        vBtn.classList.remove('listening');
-        vBtn.innerText = "🎤";
-    };
-
-    recognition.start();
+// ── ভয়েস আউটপুট (TTS) ──
+function speakText(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'bn-BD';
+  u.rate = 0.9;
+  const voices = window.speechSynthesis.getVoices();
+  const v = voices.find(v => v.lang.startsWith('bn') || v.lang.startsWith('hi'));
+  if (v) u.voice = v;
+  window.speechSynthesis.speak(u);
 }
+
+// ── ভয়েস ইনপুট (STT) ──
+function toggleVoice() {
+  const btn = document.getElementById('voiceBtn');
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    alert('Chrome ব্যবহার করুন — ভয়েস সাপোর্টের জন্য।');
+    return;
+  }
+
+  if (isRecording) {
+    if (recognition) recognition.stop();
+    return;
+  }
+
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.lang = 'bn-BD';
+  recognition.interimResults = false;
+
+  recognition.onstart = () => {
+    isRecording = true;
+    btn.classList.add('recording');
+    btn.innerHTML = '⏹';
+    showVoiceWave();
+  };
+
+  recognition.onresult = (e) => {
+    const transcript = e.results[0][0].transcript;
+    document.getElementById('userInput').value = transcript;
+    hideVoiceWave();
+  };
+
+  recognition.onend = () => {
+    isRecording = false;
+    btn.classList.remove('recording');
+    btn.innerHTML = '🎤';
+    hideVoiceWave();
+    const val = document.getElementById('userInput').value.trim();
+    if (val) sendMessage(val);
+  };
+
+  recognition.onerror = () => {
+    isRecording = false;
+    btn.classList.remove('recording');
+    btn.innerHTML = '🎤';
+    hideVoiceWave();
+  };
+
+  recognition.start();
+}
+
+function showVoiceWave() {
+  const msgs = document.getElementById('messages');
+  const d = document.createElement('div');
+  d.className = 'msg user'; d.id = 'voice-wave-msg';
+  d.innerHTML = `<div class="avatar user">আপ</div>
+    <div class="voice-wave show">
+      <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+      <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+      <span class="wave-label">রেকর্ড হচ্ছে...</span>
+    </div>`;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function hideVoiceWave() {
+  const w = document.getElementById('voice-wave-msg');
+  if (w) w.remove();
+}
+
+window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+document.getElementById('start-time').textContent = getTime();
 </script>
 </body>
 </html>
