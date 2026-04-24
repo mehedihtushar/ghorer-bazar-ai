@@ -5,9 +5,22 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 import uvicorn
-from rag_engine import generate_smart_response
 
-# লগার সেটআপ (এরর ট্র্যাক করার জন্য)
+# ডাইনামিক পাথ সেটআপ করার জন্য
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# এটি backend ফোল্ডার থেকে এক ধাপ পিছিয়ে গিয়ে frontend ফোল্ডারের ফাইলটি ধরবে
+FILE_PATH = os.path.normpath(os.path.join(BASE_DIR, "..", "frontend", "ghorer_bazar_chatbot.html"))
+
+# আপনার লজিক ইঞ্জিন ইমপোর্ট
+try:
+    from rag_engine import generate_smart_response
+except ImportError:
+    # যদি একই ফোল্ডারে থাকে তবে সরাসরি ইমপোর্ট করবে
+    import sys
+    sys.path.append(BASE_DIR)
+    from rag_engine import generate_smart_response
+
+# লগার সেটআপ
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -22,43 +35,45 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-FILE_PATH = r"E:/CustomreCallAgentSoftware/frontend/ghorer_bazar_chatbot.html"
-
-# HTML কন্টেন্ট মেমোরিতে ক্যাশ (Cost & Speed Optimization)
-# প্রতিবার ফাইল রিড করলে ডিস্কের ওপর চাপ পড়ে, যা সার্ভারের খরচ বাড়ায়। 
-# একবার লোড করে রাখলে রেসপন্স সুপার ফাস্ট হবে।
+# HTML কন্টেন্ট মেমোরিতে ক্যাশ করা
 cached_html = ""
 if os.path.exists(FILE_PATH):
-    with open(FILE_PATH, "r", encoding="utf-8") as f:
-        cached_html = f.read()
+    try:
+        with open(FILE_PATH, "r", encoding="utf-8") as f:
+            cached_html = f.read()
+        logger.info(f"✅ Frontend file loaded successfully from: {FILE_PATH}")
+    except Exception as e:
+        logger.error(f"❌ Error reading frontend file: {e}")
+else:
+    logger.warning(f"⚠️ Warning: Frontend file not found at {FILE_PATH}")
 
 class ChatMsg(BaseModel):
-    message: str = Field(..., min_length=1) # ফাঁকা মেসেজ এআই-তে পাঠাবে না (Cost Saving)
+    message: str = Field(..., min_length=1) 
     session_id: str = "default"
 
 @app.get("/", response_class=HTMLResponse)
 async def index():
+    # প্রথমে ক্যাশ থেকে চেক করবে
     if cached_html:
         return HTMLResponse(content=cached_html)
     
-    # যদি ক্যাশ খালি থাকে (প্রথমবার বা ফাইল না থাকলে)
+    # যদি কোনো কারণে ক্যাশ খালি থাকে তবে আবার রিড করার চেষ্টা করবে
     if os.path.exists(FILE_PATH):
         with open(FILE_PATH, "r", encoding="utf-8") as f:
             return HTMLResponse(content=f.read())
     
-    return HTMLResponse(content="<h1>Error: Frontend file not found!</h1>", status_code=404)
+    return HTMLResponse(content="<h1>Error: Frontend file not found!</h1><p>Please check your directory structure.</p>", status_code=404)
 
 @app.post("/chat")
 async def chat(data: ChatMsg):
     try:
-        # ইনপুট ভ্যালিডেশন (অপ্রয়োজনীয় এআই কল বন্ধ করে টাকা বাঁচাবে)
         clean_msg = data.message.strip()
         if not clean_msg:
             return {"reply": "অনুগ্রহ করে আপনার প্রশ্নটি লিখুন।"}
 
         logger.info(f"[User] session={data.session_id} | msg={clean_msg}")
         
-        # মূল আরএজি ইঞ্জিন কল (আপনার লজিক ঠিক রাখা হয়েছে)
+        # আপনার মূল RAG ইঞ্জিন কল
         reply = generate_smart_response(clean_msg, session_id=data.session_id)
         
         return {"reply": reply}
@@ -75,5 +90,5 @@ async def health():
     return {"status": "ok", "database": "connected"}
 
 if __name__ == "__main__":
-    # host="0.0.0.0" এবং port=8080 আপনার ngrok এর জন্য পারফেক্ট
+    # host="0.0.0.0" পোর্টে রান হবে যাতে লোকাল নেটওয়ার্ক বা ngrok থেকে পাওয়া যায়
     uvicorn.run(app, host="0.0.0.0", port=8080)

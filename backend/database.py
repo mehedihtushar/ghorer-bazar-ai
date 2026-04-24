@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 # এনভায়রনমেন্ট ভেরিয়েবল লোড করা
 load_dotenv()
 
-# লগিং সেটআপ (যাতে এরর হলে টার্মিনালে বিস্তারিত দেখা যায়)
+# লগিং সেটআপ
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -20,121 +20,69 @@ def get_connection():
             f'UID={os.getenv("DB_USER")};'
             f'PWD={os.getenv("DB_PWD")};'
             'TrustServerCertificate=yes;',
-            timeout=10  # ১০ সেকেন্ড পর্যন্ত অপেক্ষা করবে
+            timeout=10
         )
         return conn
     except Exception as e:
         logger.error(f"❌ ডাটাবেস কানেকশন এরর: {e}")
         return None
 
-def fetch_context(query: str) -> str:
-    """ইউজারের প্রশ্নের ওপর ভিত্তি করে ডাটাবেস থেকে বিস্তারিত কনটেক্সট নিয়ে আসা।"""
-    if not query or len(query.strip()) < 2:
-        return "সঠিকভাবে প্রশ্ন করুন যাতে আমি তথ্য খুঁজে পাই।"
-
-    ctx = []
+def fetch_context(query: str, sub_category: str = None) -> tuple:
+    """
+    ইউজার যাই লিখে পাঠাক না কেন, এটি সংশ্লিষ্ট টেবিল থেকে গুরুত্বপূর্ণ সব ডাটা 
+    একত্রে সংগ্রহ করে জেমিনাইকে 'Raw Context' হিসেবে দিবে। 
+    """
     conn = get_connection()
-    
     if not conn:
-        return "দুঃখিত, বর্তমানে ডাটাবেস সার্ভারের সাথে সংযোগ বিচ্ছিন্ন। অনুগ্রহ করে কিছুক্ষণ পর চেষ্টা করুন।"
+        return "ডাটাবেস সংযোগ বিচ্ছিন্ন।", 0.0
 
+    ctx_blocks = []
+    
     try:
         cursor = conn.cursor()
-        search_term = f'%{query}%'
 
-        # --- ১. পণ্য তথ্য (TOP 5) ---
-        # গ্রাহক যখন কোনো পণ্যের নাম বা ক্যাটাগরি জানতে চায়
-        cursor.execute("""
-            SELECT TOP 5 product_name, category, price, stock_quantity, unit
-            FROM Products 
-            WHERE product_name LIKE ? OR category LIKE ?
-        """, (search_term, search_term))
+        # ১. প্রোডাক্ট লিস্ট (পুরো লিস্ট তুলে আনা যাতে জেমিনাই নাম ম্যাচ করতে পারে)
+        # এখানে কোনো WHERE ক্লজ নেই যাতে ইংরেজি/বাংলা যাই হোক জেমিনাই বুঝতে পারে
+        cursor.execute("SELECT product_name, price, unit, stock_quantity, category FROM Products")
         products = cursor.fetchall()
         if products:
-            ctx.append("🛍️ সংশ্লিষ্ট পণ্যের তালিকা:")
-            for p in products:
-                status = "স্টক আছে" if p[3] > 0 else "বর্তমানে স্টকে নেই"
-                ctx.append(f"- {p[0]} ({p[1]}): দাম {p[2]} টাকা, {status} (পরিমাণ: {p[3]} {p[4]})")
+            p_list = [f"Product: {p[0]}, Price: {p[1]}, Unit: {p[2]}, Stock: {p[3]}, Category: {p[4]}" for p in products]
+            ctx_blocks.append("--- Available Products List ---\n" + "\n".join(p_list))
 
-        # --- ২. অর্ডার ও ডেলিভারি তথ্য (TOP 2 - লেটেস্ট তথ্য আগে) ---
-        # আইডি বা ফোন নম্বর দিয়ে সার্চ
-        cursor.execute("""
-            SELECT TOP 2 O.order_id, O.order_status, O.payment_status, O.total_amount,
-                         D.delivery_status, D.delivery_area, D.assigned_rider, 
-                         D.estimated_delivery_time, C.full_name
-            FROM Orders O
-            LEFT JOIN Delivery D ON O.order_id = D.order_id
-            LEFT JOIN Customers C ON O.customer_id = C.customer_id
-            WHERE CAST(O.order_id AS NVARCHAR) LIKE ? OR C.phone_number LIKE ?
-            ORDER BY O.order_id DESC
-        """, (search_term, search_term))
-        orders = cursor.fetchall()
-        if orders:
-            ctx.append("\n📦 অর্ডারের বর্তমান অবস্থা:")
-            for row in orders:
-                ctx.append(
-                    f"- আইডি: {row[0]} | কাস্টমার: {row[8]} | স্ট্যাটাস: {row[1]} | "
-                    f"পেমেন্ট: {row[2]} | মোট: {row[3]} টাকা | "
-                    f"ডেলিভারি: {row[4]} (এলাকা: {row[5]}, রাইডার: {row[6]}) | "
-                    f"সম্ভাব্য সময়: {row[7]}"
-                )
-
-        # --- ৩. FAQ ও পলিসি (TOP 5) ---
-        # সাধারণ প্রশ্নের উত্তর দেওয়ার জন্য
-        cursor.execute("""
-            SELECT TOP 5 question, answer 
-            FROM FAQ 
-            WHERE question LIKE ? OR answer LIKE ? OR category LIKE ?
-        """, (search_term, search_term, search_term))
+        # ২. পলিসি ও সাধারণ জিজ্ঞাসা (SubCategories/FAQ)
+        # সাব-ক্যাটাগরি নির্দিষ্ট থাকলে সেটা আগে নিবে, নাহলে সব ডিটেইলড কন্টেক্সট
+        if sub_category and sub_category != "General":
+            cursor.execute("SELECT SubCategoryName, DetailedContext FROM SubCategories WHERE SubCategoryName = ?", (sub_category,))
+        else:
+            cursor.execute("SELECT SubCategoryName, DetailedContext FROM SubCategories")
+            
         faqs = cursor.fetchall()
         if faqs:
-            ctx.append("\n❓ সাধারণ জিজ্ঞাসা (FAQ):")
-            for f in faqs:
-                ctx.append(f"- প্রশ্ন: {f[0]} | উত্তর: {f[1]}")
+            f_list = [f"Topic: {f[0]}, Details: {f[1]}" for f in faqs]
+            ctx_blocks.append("\n--- Business Policies & FAQs ---\n" + "\n".join(f_list))
 
-        # --- ৪. পেমেন্ট তথ্য (TOP 1) ---
-        cursor.execute("""
-            SELECT TOP 1 transaction_id, payment_method, amount_paid, payment_date
-            FROM Payments WHERE transaction_id LIKE ? OR order_id LIKE ?
-        """, (search_term, search_term))
-        pay = cursor.fetchone()
-        if pay:
-            ctx.append(f"\n💳 পেমেন্ট রেকর্ড → আইডি: {pay[0]}, মাধ্যম: {pay[1]}, পরিমাণ: {pay[2]} টাকা, তারিখ: {pay[3]}")
+        # ৩. অর্ডার সংক্রান্ত (যদি কুয়েরিতে নাম্বার থাকে তবেই এটি কাজ করবে)
+        if any(char.isdigit() for char in query):
+            cursor.execute("""
+                SELECT TOP 1 O.order_id, O.order_status, D.delivery_status 
+                FROM Orders O LEFT JOIN Delivery D ON O.order_id = D.order_id 
+                WHERE CAST(O.order_id AS NVARCHAR) LIKE ? 
+                ORDER BY O.order_id DESC
+            """, (f'%{query}%',))
+            order = cursor.fetchone()
+            if order:
+                ctx_blocks.append(f"\n--- Order Info ---\nOrder ID: {order[0]}, Status: {order[1]}, Delivery: {order[2]}")
 
-        # --- ৫. অভিযোগ ও সমস্যা (TOP 2) ---
-        cursor.execute("""
-            SELECT TOP 2 issue_type, status, created_at 
-            FROM Complaints WHERE description LIKE ? OR order_id LIKE ?
-        """, (search_term, search_term))
-        complaints = cursor.fetchall()
-        if complaints:
-            ctx.append("\n⚠️ অভিযোগ সংক্রান্ত তথ্য:")
-            for c in complaints:
-                ctx.append(f"- ধরন: {c[0]}, স্ট্যাটাস: {c[1]}, তারিখ: {c[2]}")
-
-        # --- ৬. প্রোমো কোড ও অফার (TOP 2) ---
-        cursor.execute("""
-            SELECT TOP 2 promo_code, discount_percent, expiry_date 
-            FROM Promotions 
-            WHERE is_active = 1 AND expiry_date >= CAST(GETDATE() AS DATE)
-            AND (promo_code LIKE ? OR category_applicable LIKE ?)
-        """, (search_term, search_term))
-        promos = cursor.fetchall()
-        if promos:
-            ctx.append("\n🎁 চলমান অফার:")
-            for pr in promos:
-                ctx.append(f"- কোড: {pr[0]}, ছাড়: {pr[1]}%, মেয়াদ: {pr[2]}")
-
-    except pyodbc.Error as e:
-        logger.error(f"❌ কুয়েরি এরর: {e}")
-        return "তথ্য খোঁজার সময় একটি কারিগরি সমস্যা হয়েছে।"
-    
+    except Exception as e:
+        logger.error(f"❌ ডাটাবেস এরর: {e}")
+        return "তথ্য সংগ্রহে সমস্যা হয়েছে।", 0.0
     finally:
-        if conn:
-            conn.close() # কাজ শেষে কানেকশন অবশ্যই বন্ধ করা হচ্ছে
+        conn.close()
 
-    # সব ডেটা একসাথে করে টেক্সট আকারে পাঠানো
-    if not ctx:
-        return "দুঃখিত, আপনার প্রশ্নের সাথে মিল আছে এমন কোনো তথ্য আমাদের ডাটাবেসে পাওয়া যায়নি।"
+    # যদি কোনো ডাটা পাওয়া যায়
+    if ctx_blocks:
+        full_context = "\n\n".join(ctx_blocks)
+        # জেমিনাইকে ফুল ডাটা দেওয়া হচ্ছে, তাই স্কোর ১.০ দেওয়া নিরাপদ
+        return full_context, 1.0
     
-    return "\n".join(ctx)
+    return "কোনো তথ্য ডাটাবেসে পাওয়া যায়নি।", 0.0
