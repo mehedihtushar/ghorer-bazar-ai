@@ -20,7 +20,11 @@ except ImportError:
     print("Error: database.py file or fetch_context function not found!")
 
 # ২. কনফিগারেশন
+<<<<<<< HEAD
 API_KEY = "AIzaSyCeMJxPPAJO_fN1pkAZ5p0T-8_3sgzVNSY" 
+=======
+API_KEY = "AIzaSyDcSO_Tytl83tL1VFdEMdb01esLfw8Lp98" 
+>>>>>>> ab588a589dff18f01e24937a05e3ea3fffa53ea1
 
 # ৩. মডেল সেটআপ
 llm = ChatGoogleGenerativeAI(
